@@ -3,6 +3,7 @@ package com.example.helloselenide;
 import com.codeborne.selenide.SelenideElement;
 
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.page;
 
 // http://localhost:3000/#!/
 public class CartPage {
@@ -35,6 +36,6 @@ public class CartPage {
 
     public CheckoutPage checkout() {
         btnCheckout.click();
-        return new CheckoutPage();
+        return page(CheckoutPage.class);
     }
 }

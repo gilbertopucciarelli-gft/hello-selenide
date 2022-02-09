@@ -3,6 +3,7 @@ package com.example.helloselenide;
 import com.codeborne.selenide.SelenideElement;
 
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.page;
 
 // http://localhost:3000/#!/review
 public class CheckoutPage {
@@ -10,6 +11,8 @@ public class CheckoutPage {
     public SelenideElement ageInput = $("#ageInput" );
 
     public SelenideElement btnOrder = $(".btn-success");
+
+    public SelenideElement btnCancel = $(".btn-default");
 
     public void getAgeInput() {
         ageInput.click();
@@ -19,8 +22,13 @@ public class CheckoutPage {
         ageInput.sendKeys(age);
     }
 
+    public CartPage getBtnCancel() {
+        btnCancel.click();
+        return page(CartPage.class);
+    }
+
     public OrderPage order() {
         btnOrder.click();
-        return new OrderPage();
+        return page(OrderPage.class);
     }
 }

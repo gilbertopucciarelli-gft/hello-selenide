@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.open;
 
 public class AgeSuiteTest {
@@ -27,29 +27,57 @@ public class AgeSuiteTest {
 
     @Test
     public void onexRoboBeerCheckoutGreater18() {
+        cartPage.btnCheckout.shouldBe(disabled);
         cartPage.addRoboBeer();
+        cartPage.btnCheckout.shouldBe(enabled);
+
         CheckoutPage checkoutPage = cartPage.checkout();
+        checkoutPage.btnOrder.shouldBe(disabled);
+        checkoutPage.ageInput.shouldBe(visible);
         checkoutPage.getAgeInput();
         checkoutPage.sendKeysAge("21");
+        checkoutPage.btnOrder.shouldBe(enabled);
+
         OrderPage orderPage = checkoutPage.order();
         orderPage.getConfirmationMessage().shouldBe(text("Coming right up! ~bzzzt~"));
     }
 
     @Test
     public void onexRoboBeerCheckoutLess18() {
+        cartPage.btnCheckout.shouldBe(disabled);
         cartPage.addRoboBeer();
+        cartPage.btnCheckout.shouldBe(enabled);
+
         CheckoutPage checkoutPage = cartPage.checkout();
+        checkoutPage.btnOrder.shouldBe(disabled);
+        checkoutPage.ageInput.shouldBe(visible);
         checkoutPage.getAgeInput();
         checkoutPage.sendKeysAge("17");
+        checkoutPage.btnOrder.shouldBe(enabled);
+
         OrderPage orderPage = checkoutPage.order();
         orderPage.getAlertMessage().shouldBe(text("Only adults can buy alcohol!"));
     }
 
     @Test
     public void onexRoboColaCheckout() {
+        cartPage.btnCheckout.shouldBe(disabled);
         cartPage.addRoboCola();
+        cartPage.btnCheckout.shouldBe(enabled);
+
         CheckoutPage checkoutPage = cartPage.checkout();
+        checkoutPage.ageInput.shouldBe(hidden);
+        checkoutPage.btnCancel.shouldBe(enabled);
+        checkoutPage.btnOrder.shouldBe(enabled);
+
         OrderPage orderPage = checkoutPage.order();
         orderPage.getConfirmationMessage().shouldBe(text("Coming right up! ~bzzzt~"));
+    }
+
+    @Test
+    public void cancelOrder() {
+        cartPage.addRoboCola();
+        CheckoutPage checkoutPage = cartPage.checkout();
+        checkoutPage.getBtnCancel();
     }
 }
