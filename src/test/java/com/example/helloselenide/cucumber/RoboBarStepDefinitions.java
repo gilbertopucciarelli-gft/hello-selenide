@@ -26,28 +26,42 @@ public class RoboBarStepDefinitions {
         cartPage = new CartPage();
     }
 
-    @When("User adds a RoboCola to Cart")
-    public void usersAddsARoboColaToCart() {
-        cartPage.addRoboCola();
+    @When("User adds {int} RoboCola to Cart")
+    public void userAddsRoboColaToCart(int number) {
+        for (int i = 1; i <= number; i++) {
+            cartPage.addRoboCola();
+        }
+    }
+
+    @When("User adds {int} RoboBeer to Cart")
+    public void userAddsRoboBeerToCart(int number) {
+        for (int i = 1; i <= number; i++) {
+            cartPage.addRoboBeer();
+        }
+    }
+
+    @When("User adds {int} RoboWine to Cart")
+    public void userAddsRoboWineToCart(int number) {
+        for (int i = 1; i <= number; i++) {
+            cartPage.addRobowine();
+        }
+    }
+
+    @When("User adds {int} RoboCola, {int} RoboBeer and {int} RoboWine to Cart")
+    public void userAddsColaRoboColaBeerRoboBeerAndWineRoboWineToCart(int colas, int beers, int wines) {
+        userAddsRoboColaToCart(colas);
+        userAddsRoboBeerToCart(beers);
+        userAddsRoboWineToCart(wines);
     }
 
     @Then("Total should be €{double}")
     public void totalShouldBe(Double total) {
-        BigDecimal scaled = (BigDecimal.valueOf(total)).setScale(2, RoundingMode.HALF_DOWN);
-        cartPage.total().shouldBe(exactText("€"+scaled.toString()));
+        // BigDecimal scaled = (BigDecimal.valueOf(total)).setScale(2, RoundingMode.HALF_DOWN);
+        // cartPage.total().shouldBe(exactText("€"+scaled.toString()));
+        cartPage.total().shouldBe((exactText(String.format("€%.2f", total))));
     }
 
-    @When("User adds a RoboBeer to Cart")
-    public void userAddsARoboBeerToCart() {
-        cartPage.addRoboBeer();
-    }
-
-    @When("User adds a RoboWine to Cart")
-    public void userAddsARoboWineToCart() {
-        cartPage.addRobowine();
-    }
-
-    @And("User proceeds to Checkout")
+    @Then("User proceeds to Checkout")
     public void userProceedsToCheckout() {
         checkoutPage = cartPage.checkout();
     }
@@ -57,23 +71,45 @@ public class RoboBarStepDefinitions {
         orderPage = checkoutPage.order();
     }
 
-    @Then("Confirmation Message should be {string}")
-    public void confirmationMessageShouldBe(String message) {
-        orderPage.getConfirmationMessage().shouldBe(exactText("Coming right up! ~bzzzt~"));
-    }
-
-    @And("User clicks Age Input")
-    public void userClicksAgeInput() {
-        checkoutPage.getAgeInput();
-    }
-
     @And("User specify {int} as his age")
     public void userSpecifyAsHisAge(int age) {
+        checkoutPage.getAgeInput();
         checkoutPage.sendKeysAge(String.valueOf(age));
+    }
+
+    @Then("Confirmation Message should be {string}")
+    public void confirmationMessageShouldBe(String message) {
+        orderPage.getConfirmationMessage().shouldBe(exactText(message));
     }
 
     @Then("Alert Message should be {string}")
     public void alertMessageShouldBe(String message) {
-        orderPage.getAlertMessage().shouldBe(exactText("Only adults can buy alcohol!"));
+        orderPage.getAlertMessage().shouldBe(exactText(message));
+    }
+
+    @Given("User proceeds to Checkout and order several RoboColas")
+    public void userProceedsToCheckoutAndOrderSeveralRoboColas() {
+        userOpensRoboBarWebsite();
+        userAddsRoboColaToCart(1);
+        userProceedsToCheckout();
+    }
+
+    @Given("User proceeds to Checkout and order several RoboBeers")
+    public void userProceedsToCheckoutAndOrderSeveralRoboBeers() {
+        userOpensRoboBarWebsite();
+        userAddsRoboBeerToCart(1);
+        userProceedsToCheckout();
+    }
+
+    @Given("User proceeds to complete his order Underage")
+    public void userProceedsToCompleteHisOrderUnderage() {
+        userProceedsToCheckoutAndOrderSeveralRoboBeers();
+        userSpecifyAsHisAge(17);
+    }
+
+    @Given("User proceeds to complete his order Overage")
+    public void userProceedsToCompleteHisOrderOverage() {
+        userProceedsToCheckoutAndOrderSeveralRoboBeers();
+        userSpecifyAsHisAge(21);
     }
 }
