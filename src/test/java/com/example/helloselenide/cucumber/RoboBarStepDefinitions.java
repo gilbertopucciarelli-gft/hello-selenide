@@ -1,5 +1,6 @@
 package com.example.helloselenide.cucumber;
 
+import com.codeborne.selenide.logevents.SelenideLogger;
 import com.example.helloselenide.CartPage;
 import com.example.helloselenide.CheckoutPage;
 import com.example.helloselenide.OrderPage;
@@ -7,6 +8,7 @@ import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import io.qameta.allure.selenide.AllureSelenide;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -22,7 +24,12 @@ public class RoboBarStepDefinitions {
 
     @Given("User opens RoboBar Website")
     public void userOpensRoboBarWebsite() {
-        open("http://localhost:3000");
+        //open("http://localhost:3000");
+        open("https://robobar.sinensia.pw");
+        SelenideLogger.addListener("allure", new AllureSelenide()
+                .screenshots(true)
+                .savePageSource(false)
+        );
         cartPage = new CartPage();
     }
 
